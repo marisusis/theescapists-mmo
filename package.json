@@ -1,0 +1,27 @@
+{
+  "name": "theescapists-mmo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spacegeek224/theescapists-mmo.git"
+  },
+  "author": "Maris Usis",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/spacegeek224/theescapists-mmo/issues"
+  },
+  "homepage": "https://github.com/spacegeek224/theescapists-mmo#readme",
+  "dependencies": {
+    "express": "^4.13.4",
+    "path": "^0.12.7",
+    "q": "^1.4.1",
+    "q-io": "^1.13.2",
+    "socket.io": "^1.4.6",
+    "underscore": "^1.8.3"
+  }
+}
