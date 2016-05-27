@@ -6,17 +6,17 @@ var server = http.createServer(app);
 var path = require('path');
 
 //implement http config
-var port = 8080;
+var port = 9500;
 app.set('port', port);
 
-app.get('/socket.io/socket.io.js',function(req,res) {
-  
+app.get('/socket.io/socket.io.js', function(req, res) {
+
 });
 
-app.get('/*',function(req,res) {
+app.get('/*', function(req, res) {
   res.sendFile(path.resolve(
-__dirname+'../../../client/'+req.params[0]));
-  
+    __dirname + '../../../client/' + req.params[0]));
+
 });
 
 module.exports = {
@@ -24,5 +24,6 @@ module.exports = {
     server.listen(port, function(e) {
       log("http server listening on :8080");
     })
-  }
+  },
+  server: server
 }

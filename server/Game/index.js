@@ -1,19 +1,11 @@
+var log = require('util').log;
 
 
-
-
-module.exports = function() {
-  var io = require('socket.io')(8081);
-
-io.on('connection', function (socket) {
-  io.emit('this', { will: 'be received by everyone'});
-
-  socket.on('private message', function (from, msg) {
-    console.log('I received a private message by ', from, ' saying ', msg);
+module.exports = function(app) {
+ var io = require('socket.io')(app);
+  log('starting socket.io server...')
+  io.on('connection',function(socket) {
+    log('a user connected');
   });
-
-  socket.on('disconnect', function () {
-    io.emit('user disconnected');
-  });
-});
+  
 }
