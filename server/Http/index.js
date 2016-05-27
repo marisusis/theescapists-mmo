@@ -9,6 +9,10 @@ var path = require('path');
 var port = 8080;
 app.set('port', port);
 
+app.get('/socket.io/socket.io.js',function(req,res) {
+  
+});
+
 app.get('/*',function(req,res) {
   res.sendFile(path.resolve(
 __dirname+'../../../client/'+req.params[0]));
