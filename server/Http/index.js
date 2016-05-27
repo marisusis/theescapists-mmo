@@ -6,7 +6,7 @@ var server = http.createServer(app);
 var path = require('path');
 
 //implement http config
-var port = 9500;
+var port = 8080;
 app.set('port', port);
 
 app.get('/*',function(req,res) {
@@ -18,7 +18,7 @@ __dirname+'../../../client/'+req.params[0]));
 module.exports = {
   start: function() {
     server.listen(port, function(e) {
-      log("http server listening on :9500");
+      log("http server listening on :8080");
     })
   }
 }
