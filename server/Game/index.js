@@ -6,6 +6,9 @@ module.exports = function(app) {
   log('starting socket.io server...')
   io.on('connection',function(socket) {
     log('a user connected');
+    socket.on('help',function(d) {
+      log('[HELP]: '+d);
+    })
   });
   
 }

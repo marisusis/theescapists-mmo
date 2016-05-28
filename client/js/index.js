@@ -25,20 +25,24 @@ Loader.prototype.ready = function() {
 
 
 
-function Game(ctx, map) {
-  this.ctx = ctx;
+function Game(canvas, map) {
+  this.canvas = canvas;
+  this.ctx = this.canvas.getContext('2d');
   this.monsters = [];
   this.player = {};
   this.map = map;
   this.timestamp = function() {
     return window.performance && window.performance.now ? window.performance.now() : new Date().getTime();
   }
+
 }
 
 Game.prototype.init = function(ts) {
   this.current = {
     tileset: this.images[ts]
   }
+  this.canvas.width = this.map.width * this.current.tileset.tile;
+  this.canvas.height = this.map.height * this.current.tileset.tile;
 }
 
 Game.prototype.loadImages = function(images) {
@@ -60,6 +64,14 @@ Game.prototype.update = function(delta) {
 
 Game.prototype.render = function(delta) {
   this.ctx.clearRect(0, 0, this.width, this.height);
+
+  for(var y = 0; y < this.map.height; y++) {
+    for(var x = 0; x < this.map.width; x++) {
+      if (this.getTile(x, y)!=-1) {
+      ctx.drawImage(this.current.tileset.img, this.getTile(x, y) * 64, 0, 64, 64, x * 64, y * 64, 64, 64);
+      }
+    }
+  }
 }
 
 Game.prototype.frame = function() {
@@ -71,26 +83,66 @@ Game.prototype.frame = function() {
   requestAnimationFrame(this.frame.bind(this));
 };
 
+
+Game.prototype.getTile = function(x, y) {
+  return this.map.layer[y * this.map.width + x];
+}
+
+var KEYS = {
+
+};
+
+function handleKey(down, e, key) {
+  switch(key) {
+    case 37:
+      KEYS.LEFT = down;
+      break;
+    case 38:
+      KEYS.UP = down;
+      break;
+    case 39:
+      KEYS.RIGHT = down;
+      break;
+    case 40:
+      KEYS.DOWN = down;
+      break;
+    default:
+      KEYS[String.fromCharCode(key)] = down;
+      break;
+  }
+};
+
+
+document.onkeydown = function(e) {
+  handleKey(true, e, e.which);
+};
+
+document.onkeyup = function(e) {
+  handleKey(false, e, e.which);
+};
+
+function getHelp(s) {
+  socket.emit('help',s);
+}
+
 var map = {
-  width: 8,
-  height: 8,
+  width: 6,
+  height: 6,
   layer: [
     1, 1, 1, 1, 1, 1,
     1, 1, 2, 2, 1, 1,
     1, 1, 1, 1, 1, 1,
     1, 2, 1, 2, 2, 2,
     1, 1, 0, 0, 1, 1,
-    1, 1, 0, 0, 1, 1,
+    1, 1, -1, -1, 1, 1,
   ]
 };
 
-var game = new Game(ctx, map);
+var game = new Game(canvas, map);
 var loader = new Loader(game);
 
 loader.loadImage('set1', 'img/tiles.png', 64);
 loader.ready();
 
 game.init('set1');
-game.x = 1;
-game.y = 2;
 game.start();

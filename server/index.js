@@ -4,5 +4,5 @@ log("Starting server...");
 var httpsrv = require('./Http');
 var gamesrv = require('./Game');
 
-httpsrv.start();
+httpsrv.start(9500);
 gamesrv(httpsrv.server);
