@@ -88,6 +88,10 @@ Game.prototype.getTile = function(x, y) {
   return this.map.layer[y * this.map.width + x];
 }
 
+function Camera() {
+  
+}
+
 var KEYS = {
 
 };
