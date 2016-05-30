@@ -77,8 +77,8 @@ Game.prototype.render = function(delta) {
   var endRow = startRow + (this.camera.height / map.tsize);
   var offsetX = -this.camera.x + startCol * this.map.tsize;
   var offsetY = -this.camera.y + startRow * this.map.tsize;
-  for(var c = 0; c < this.map.cols; c++) {
-    for(var r = 0; r < this.map.rows; r++) {
+  for(var c = startCol; c <= endCol; c++) {
+    for(var r = startRow; r <= endRow; r++) {
       var tile = this.getTile(c, r);
       var x = (c - startCol) * this.map.tsize + offsetX;
       var y = (r - startRow) * this.map.tsize + offsetY;
