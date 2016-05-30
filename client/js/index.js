@@ -41,8 +41,8 @@ Game.prototype.init = function(ts) {
   this.current = {
     tileset: this.images[ts]
   }
-  this.width = this.canvas.width = this.map.width * this.map.tsize;
-  this.height = this.canvas.height = this.map.height * this.map.tsize;
+  this.width = this.canvas.width = this.map.cols * this.map.tsize;
+  this.height = this.canvas.height = this.map.rows * this.map.tsize;
 }
 
 Game.prototype.loadImages = function(images) {
@@ -64,10 +64,21 @@ Game.prototype.update = function(delta) {
 Game.prototype.render = function(delta) {
   this.ctx.clearRect(0, 0, this.width, this.height);
 
-  for(var y = 0; y < this.map.height; y++) {
-    for(var x = 0; x < this.map.width; x++) {
-      if (this.getTile(x, y)!=-1) {
-      ctx.drawImage(this.current.tileset.img, this.getTile(x, y) * 64, 0, 64, 64, x * 64, y * 64, 64, 64);
+  for(var c = 0; c < this.map.cols; c++) {
+    for(var r = 0; r < this.map.rows; r++) {
+      var tile = this.getTile(c, r);
+      if(tile !== 0) {
+        ctx.drawImage(
+          this.current.tileset.img, //image
+          (tile - 1) * this.map.tsize,
+          0,
+          this.map.tsize,
+          this.map.tsize,
+          c * this.map.tsize,
+          r * this.map.tsize,
+          this.map.tsize,
+          this.map.tsize
+        )
       }
     }
   }
@@ -84,7 +95,7 @@ Game.prototype.frame = function() {
 
 
 Game.prototype.getTile = function(x, y) {
-  return this.map.layer[y * this.map.width + x];
+  return this.map.layer[y * this.map.cols + x];
 }
 
 var KEYS = {
@@ -121,12 +132,12 @@ document.onkeyup = function(e) {
 };
 
 function getHelp(s) {
-  socket.emit('help',s);
+  socket.emit('help', s);
 }
 
 var map = {
-  width: 6,
-  height: 6,
+  cols: 6,
+  rows: 6,
   tsize: 64,
   layer: [
     1, 1, 1, 1, 1, 1,
@@ -134,7 +145,7 @@ var map = {
     1, 1, 1, 1, 1, 1,
     1, 2, 1, 2, 2, 2,
     1, 1, 0, 0, 1, 1,
-    1, 1, -1, -1, 1, 1,
+    1, 1, 0, 0, 1, 1,
   ]
 };
 
