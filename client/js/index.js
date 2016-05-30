@@ -34,6 +34,12 @@ function Game(canvas, map) {
   this.timestamp = function() {
     return window.performance && window.performance.now ? window.performance.now() : new Date().getTime();
   }
+  this.camera = {
+    x: 0,
+    y: 0,
+    width: 4 * this.map.tsize,
+    height: 4 * this.map.tsize
+  }
 
 }
 
@@ -43,6 +49,8 @@ Game.prototype.init = function(ts) {
   }
   this.width = this.canvas.width = this.map.cols * this.map.tsize;
   this.height = this.canvas.height = this.map.rows * this.map.tsize;
+  this.camera.maxX = this.map.cols * this.map.tsize - this.camera.width;
+  this.camera.maxY = this.map.rows * this.map.tsize - this.camera.height;
 }
 
 Game.prototype.loadImages = function(images) {
@@ -63,10 +71,17 @@ Game.prototype.update = function(delta) {
 
 Game.prototype.render = function(delta) {
   this.ctx.clearRect(0, 0, this.width, this.height);
-
+  var startCol = Math.floor(this.camera.x / map.tsize);
+  var endCol = startCol + (this.camera.width / map.tsize);
+  var startRow = Math.floor(this.camera.y / map.tsize);
+  var endRow = startRow + (this.camera.height / map.tsize);
+  var offsetX = -this.camera.x + startCol * this.map.tsize;
+  var offsetY = -this.camera.y + startRow * this.map.tsize;
   for(var c = 0; c < this.map.cols; c++) {
     for(var r = 0; r < this.map.rows; r++) {
       var tile = this.getTile(c, r);
+      var x = (c - startCol) * this.map.tsize + offsetX;
+      var y = (r - startRow) * this.map.tsize + offsetY;
       if(tile !== 0) {
         ctx.drawImage(
           this.current.tileset.img, //image
@@ -141,7 +156,7 @@ var map = {
   tsize: 64,
   layer: [
     1, 1, 1, 1, 1, 1,
-    1, 1, 2, 2, 1, 1,
+    1, 1, 2, 3, 1, 1,
     1, 1, 1, 1, 1, 1,
     1, 2, 1, 2, 2, 2,
     1, 1, 0, 0, 1, 1,
