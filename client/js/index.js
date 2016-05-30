@@ -37,13 +37,12 @@ function Game(canvas, map) {
 
 }
 
-Game.prototype.init = function(ts,camera) {
+Game.prototype.init = function(ts) {
   this.current = {
     tileset: this.images[ts]
   }
-  this.camera = camera;
-  this.canvas.width = this.map.width * this.current.tileset.tile;
-  this.canvas.height = this.map.height * this.current.tileset.tile;
+  this.width = this.canvas.width = this.map.width * this.map.tsize;
+  this.height = this.canvas.height = this.map.height * this.map.tsize;
 }
 
 Game.prototype.loadImages = function(images) {
@@ -51,8 +50,7 @@ Game.prototype.loadImages = function(images) {
 }
 
 Game.prototype.start = function() {
-  this.width = this.current.tileset.tile * this.map.width;
-  this.height = this.current.tileset.tile * this.map.width;
+
   this.now = 0;
   this.dt = 0;
   this.last = this.timestamp();
@@ -60,7 +58,7 @@ Game.prototype.start = function() {
 }
 
 Game.prototype.update = function(delta) {
-  this.camera.update(1,1);
+
 }
 
 Game.prototype.render = function(delta) {
@@ -68,8 +66,8 @@ Game.prototype.render = function(delta) {
 
   for(var y = 0; y < this.map.height; y++) {
     for(var x = 0; x < this.map.width; x++) {
-      if(this.getTile(x, y) != -1) {
-        ctx.drawImage(this.current.tileset.img, this.getTile(x, y) * 64, 0, 64, 64, x * 64, y * 64, 64, 64);
+      if (this.getTile(x, y)!=-1) {
+      ctx.drawImage(this.current.tileset.img, this.getTile(x, y) * 64, 0, 64, 64, x * 64, y * 64, 64, 64);
       }
     }
   }
@@ -87,24 +85,6 @@ Game.prototype.frame = function() {
 
 Game.prototype.getTile = function(x, y) {
   return this.map.layer[y * this.map.width + x];
-}
-
-function Camera(x, y, width, height, maxX, maxY) {
-  this.x = x;
-  this.y = y;
-  this.width = width;
-  this.height = height;
-  this.maxX = maxX;
-  this.maxY = maxY;
-}
-
-Camera.prototype.update = function(x, y) {
-  this.x = x;
-  this.y = y;
-  this.startCol = Math.floor(this.x / this.tsize);
-  this.endCol = this.startCol + (this.width / this.tsize);
-  this.startRow = Math.floor(this.y / this.tsize);
-  this.endRow = this.startRow + (this.height / this.tsize);
 }
 
 var KEYS = {
@@ -141,12 +121,13 @@ document.onkeyup = function(e) {
 };
 
 function getHelp(s) {
-  socket.emit('help', s);
+  socket.emit('help',s);
 }
 
 var map = {
   width: 6,
   height: 6,
+  tsize: 64,
   layer: [
     1, 1, 1, 1, 1, 1,
     1, 1, 2, 2, 1, 1,
@@ -158,11 +139,10 @@ var map = {
 };
 
 var game = new Game(canvas, map);
-var camera = new Camera(5,10,4,4,6,6);
 var loader = new Loader(game);
 
 loader.loadImage('set1', 'img/tiles.png', 64);
 loader.ready();
 
-game.init('set1',camera);
+game.init('set1');
 game.start();
