@@ -1,8 +1,5 @@
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
-var tiles = new Image();
-tiles.src = "img/tiles.png";
-var socket = io();
 
 function Loader(game) {
   this.game = game;
@@ -22,8 +19,6 @@ Loader.prototype.loadImage = function(id, url, tile) {
 Loader.prototype.ready = function() {
   this.game.loadImages(this.images);
 }
-
-
 
 function Game(canvas, map,camera) {
   this.canvas = canvas;
@@ -49,8 +44,8 @@ Game.prototype.init = function(ts) {
   }
   this.width = this.map.cols * this.map.tsize;
   this.height = this.map.rows * this.map.tsize;
-  this.canvas.height=1000;
-  this.canvas.width=1000;
+  this.canvas.height = this.camera.width;
+  this.canvas.width = this.camera.height;
   this.camera.maxX = this.map.cols * this.map.tsize - this.camera.width;
   this.camera.maxY = this.map.rows * this.map.tsize - this.camera.height;
 }
@@ -185,7 +180,7 @@ var map = {
   rows: 12,
   tsize: 64,
   layer: [
-3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+        3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
         3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3,
         3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3,
         3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3,
@@ -196,10 +191,10 @@ var map = {
         3, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 3,
         3, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 3,
         3, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 3,
-3, 3, 3, 1, 1, 2, 3, 3, 3, 3, 3, 3
+        3, 3, 3, 1, 1, 2, 3, 3, 3, 3, 3, 3
   ]
 };
-var camera = new Camera(map,256,256);
+var camera = new Camera(map,8*64,6*64);
 var game = new Game(canvas, map,camera);
 
 var loader = new Loader(game);
@@ -208,4 +203,4 @@ loader.loadImage('set1', 'img/tiles.png', 64);
 loader.ready();
 
 game.init('set1');
-game.start(); 
+game.start();
