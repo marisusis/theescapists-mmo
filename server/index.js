@@ -6,5 +6,5 @@ var gamesrv = require('./Game');
 
 
 
-httpsrv.start(9500);
+httpsrv.start(8080);
 gamesrv(httpsrv.server);

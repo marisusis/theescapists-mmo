@@ -25,7 +25,7 @@ Loader.prototype.ready = function() {
 
 
 
-function Game(canvas, map) {
+function Game(canvas, map,camera) {
   this.canvas = canvas;
   this.ctx = this.canvas.getContext('2d');
   this.monsters = [];
@@ -34,11 +34,11 @@ function Game(canvas, map) {
   this.timestamp = function() {
     return window.performance && window.performance.now ? window.performance.now() : new Date().getTime();
   }
-  this.camera = {
+  this.camera = camera||{
     x: 0,
     y: 0,
-    width: 4 * this.map.tsize,
-    height: 4 * this.map.tsize
+    width: 256,
+    height: 256
   }
 
 }
@@ -47,8 +47,10 @@ Game.prototype.init = function(ts) {
   this.current = {
     tileset: this.images[ts]
   }
-  this.width = this.canvas.width = this.map.cols * this.map.tsize;
-  this.height = this.canvas.height = this.map.rows * this.map.tsize;
+  this.width = this.map.cols * this.map.tsize;
+  this.height = this.map.rows * this.map.tsize;
+  this.canvas.height=1000;
+  this.canvas.width=1000;
   this.camera.maxX = this.map.cols * this.map.tsize - this.camera.width;
   this.camera.maxY = this.map.rows * this.map.tsize - this.camera.height;
 }
@@ -66,15 +68,22 @@ Game.prototype.start = function() {
 }
 
 Game.prototype.update = function(delta) {
-  
+  var dirx = 0;
+    var diry = 0;
+    if (KEYS.LEFT) { dirx = -1; }
+    if (KEYS.RIGHT) { dirx = 1; }
+    if (KEYS.UP) { diry = -1; }
+    if (KEYS.DOWN) { diry = 1; }
+
+    this.camera.move(delta, dirx, diry);
 }
 
 Game.prototype.render = function(delta) {
-  this.ctx.clearRect(0, 0, this.width, this.height);
-  var startCol = Math.floor(this.camera.x / map.tsize);
-  var endCol = startCol + (this.camera.width / map.tsize);
-  var startRow = Math.floor(this.camera.y / map.tsize);
-  var endRow = startRow + (this.camera.height / map.tsize);
+  this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
+  var startCol = Math.floor(this.camera.x / this.map.tsize);
+  var endCol = startCol + (this.camera.width / this.map.tsize);
+  var startRow = Math.floor(this.camera.y / this.map.tsize);
+  var endRow = startRow + (this.camera.height / this.map.tsize);
   var offsetX = -this.camera.x + startCol * this.map.tsize;
   var offsetY = -this.camera.y + startRow * this.map.tsize;
   for(var c = startCol; c <= endCol; c++) {
@@ -112,6 +121,27 @@ Game.prototype.frame = function() {
 Game.prototype.getTile = function(x, y) {
   return this.map.layer[y * this.map.cols + x];
 }
+
+
+function Camera(map, width, height) {
+    this.x = 0;
+    this.y = 0;
+    this.width = width;
+    this.height = height;
+    this.maxX = map.cols * map.tsize - width;
+    this.maxY = map.rows * map.tsize - height;
+}
+
+Camera.SPEED = 256; // pixels per second
+
+Camera.prototype.move = function (delta, dirx, diry) {
+    // move camera
+    this.x += dirx * Camera.SPEED * delta;
+    this.y += diry * Camera.SPEED * delta;
+    // clamp values
+    this.x = Math.max(0, Math.min(this.x, this.maxX));
+    this.y = Math.max(0, Math.min(this.y, this.maxY));
+};
 
 var KEYS = {
 
@@ -151,20 +181,27 @@ function getHelp(s) {
 }
 
 var map = {
-  cols: 6,
-  rows: 6,
+  cols: 12,
+  rows: 12,
   tsize: 64,
   layer: [
-    1, 1, 1, 1, 1, 1,
-    1, 1, 2, 3, 1, 1,
-    1, 1, 1, 1, 1, 1,
-    1, 2, 1, 2, 2, 2,
-    1, 1, 0, 0, 1, 1,
-    1, 1, 0, 0, 1, 1,
+3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+        3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3,
+        3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3,
+        3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3,
+        3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3,
+        3, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 3,
+        3, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 3,
+        3, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 3,
+        3, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 3,
+        3, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 3,
+        3, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 3,
+3, 3, 3, 1, 1, 2, 3, 3, 3, 3, 3, 3
   ]
 };
+var camera = new Camera(map,256,256);
+var game = new Game(canvas, map,camera);
 
-var game = new Game(canvas, map);
 var loader = new Loader(game);
 
 loader.loadImage('set1', 'img/tiles.png', 64);

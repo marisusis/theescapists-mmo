@@ -7,6 +7,5 @@
     To change this template use Tools | Templates.
 */
 
-root {
-    display: block;
-}
+body {
+    overflow: hidden;}
