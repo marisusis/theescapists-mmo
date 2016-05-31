@@ -171,4 +171,4 @@ loader.loadImage('set1', 'img/tiles.png', 64);
 loader.ready();
 
 game.init('set1');
-game.start();
+game.start(); 
