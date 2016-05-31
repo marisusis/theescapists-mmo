@@ -66,7 +66,7 @@ Game.prototype.start = function() {
 }
 
 Game.prototype.update = function(delta) {
-
+  
 }
 
 Game.prototype.render = function(delta) {
@@ -89,8 +89,8 @@ Game.prototype.render = function(delta) {
           0,
           this.map.tsize,
           this.map.tsize,
-          c * this.map.tsize,
-          r * this.map.tsize,
+          Math.round(x),
+          Math.round(y),
           this.map.tsize,
           this.map.tsize
         )
